@@ -17,8 +17,6 @@
 
 package org.example.galaxytracing.common.constant;
 
-
-import lombok.Getter;
 import org.example.galaxytracing.common.excetion.GalaxyTracingException;
 
 import java.lang.management.ManagementFactory;
@@ -28,93 +26,106 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 /**
- * 雪花算法ID
+ * 雪花算法ID.
  *
  * @author JiekerTime
- * @since 2021/11/25 19:49
  */
-@Getter
 public final class SnowflakeId {
+    
     /**
-     * 开始时间戳(2021-01-01)
+     * 开始时间戳(2021-01-01).
      */
-    private final long TWEPOCH = 1609430400000L;
+    private final long baseTimeStamp = 1609430400000L;
+    
     /**
-     * 机器ID在雪花ID中所占的位数
+     * 机器ID在雪花ID中所占的位数.
      */
-    private final long WORK_ID_BITS = 5;
+    private final long workIdBits = 5;
+    
     /**
-     * 数据标识在雪花ID中所占位数
+     * 数据标识在雪花ID中所占位数.
      */
-    private final long DATA_ID_BITS = 5;
+    private final long dataIdBits = 5;
+    
     /**
-     * 支持的最大机器ID
+     * 支持的最大机器ID.
      */
-    private final long MAX_WORKER_ID = ~(-1L << WORK_ID_BITS);
+    private final long maxWorkerId = ~(-1L << workIdBits);
+    
     /**
-     * 支持的最大数据标识ID
+     * 支持的最大数据标识ID.
      */
-    private final long MAX_DATA_ID = ~(-1L << DATA_ID_BITS);
+    private final long maxDataId = ~(-1L << dataIdBits);
+    
     /**
-     * 序列在雪花ID中占的位数
+     * 序列在雪花ID中占的位数.
      */
-    private final long SEQUENCE_BITS = 12;
+    private final long sequenceBits = 12;
+    
     /**
-     * 数据标识ID向左移17位(12+5)
+     * 数据标识ID向左移17位(12+5).
      */
-    private final long DATA_ID_SHIFT = SEQUENCE_BITS + WORK_ID_BITS;
+    private final long dataIdShift = sequenceBits + workIdBits;
+    
     /**
-     * 机器ID向左移12位
+     * 机器ID向左移12位.
      */
-    private final long WORKER_ID_SHIFT = SEQUENCE_BITS;
+    private final long workerIdShift = sequenceBits;
+    
     /**
-     * 时间截向左移22位(5+5+12)
+     * 时间截向左移22位(5+5+12).
      */
-    private final long TIME_STAMP_LEFT_SHIFT = SEQUENCE_BITS + WORK_ID_BITS + DATA_ID_BITS;
+    private final long timeStampLeftShift = sequenceBits + workIdBits + dataIdBits;
+    
     /**
-     * 序列掩码
+     * 序列掩码.
      */
-    private final long SEQUENCE_MASK = ~(-1L << SEQUENCE_BITS);
+    private final long sequenceMask = ~(-1L << sequenceBits);
+    
     /**
-     * 上一次生成时间戳
+     * 上一次生成时间戳.
      */
     private long lastTimestamp = -1L;
-    /**
-     * 序列ID
-     */
-    private long sequence = 0L;
-    /**
-     * 机器ID
-     */
-    private final long WORKER_ID;
-    /**
-     * 数据标识
-     */
-    private final long DATA_ID;
     
+    /**
+     * 序列ID.
+     */
+    private long sequence;
+    
+    /**
+     * 机器ID.
+     */
+    private final long workerId;
+    
+    /**
+     * 数据标识.
+     */
+    private final long dataId;
     
     public SnowflakeId() {
-        DATA_ID = generateDataId(MAX_DATA_ID);
-        WORKER_ID = generateWorkId(DATA_ID, MAX_WORKER_ID);
+        dataId = generateDataId(maxDataId);
+        workerId = generateWorkId(dataId, maxWorkerId);
     }
     
     /**
+     * 构造方法.
+     *
      * @param workerId 机器ID
      * @param dataId   数据标识
      */
-    public SnowflakeId(long workerId, long dataId) {
-        if (workerId > MAX_WORKER_ID || workerId < 0) {
-            throw new GalaxyTracingException("worker Id can't be greater than %d or less than 0", MAX_WORKER_ID);
+    public SnowflakeId(final long workerId, final long dataId) {
+        if (workerId > maxWorkerId || workerId < 0) {
+            throw new GalaxyTracingException("worker Id can't be greater than %d or less than 0", maxWorkerId);
         }
-        if (dataId > MAX_DATA_ID || dataId < 0) {
-            throw new GalaxyTracingException("datacenter Id can't be greater than %d or less than 0", MAX_DATA_ID);
+        if (dataId > maxDataId || dataId < 0) {
+            throw new GalaxyTracingException("datacenter Id can't be greater than %d or less than 0", maxDataId);
         }
-        this.WORKER_ID = workerId;
-        this.DATA_ID = dataId;
+        this.workerId = workerId;
+        this.dataId = dataId;
     }
     
     /**
-     * 获取下一个ID
+     * 获取下一个ID.
      *
      * @return SnowflakeId
      */
@@ -127,7 +138,7 @@ public final class SnowflakeId {
         
         if (lastTimestamp == currentTimestamp) {
             // 当前毫秒内，则+1
-            sequence = (sequence + 1) & SEQUENCE_MASK;
+            sequence = (sequence + 1) & sequenceMask;
             if (sequence == 0) {
                 // 当前毫秒内计数满了，则等待下一秒
                 long timestamp = System.currentTimeMillis();
@@ -141,15 +152,16 @@ public final class SnowflakeId {
         }
         lastTimestamp = currentTimestamp;
         // ID偏移组合生成最终的ID，并返回ID
-        return ((currentTimestamp - TWEPOCH) << TIME_STAMP_LEFT_SHIFT) | (DATA_ID << DATA_ID_SHIFT) | (WORKER_ID << WORKER_ID_SHIFT) | sequence;
+        return ((currentTimestamp - baseTimeStamp) << timeStampLeftShift) | (dataId << dataIdShift) | (workerId << workerIdShift) | sequence;
     }
     
     /**
-     * 生成数据标识符
+     * 生成数据标识符.
      *
+     * @param maxDataId 数据标识符最大值
      * @return dataId
      */
-    private static long generateDataId(long maxDataId) {
+    public static long generateDataId(final long maxDataId) {
         long result;
         try {
             InetAddress ip = InetAddress.getLocalHost();
@@ -168,21 +180,23 @@ public final class SnowflakeId {
     }
     
     /**
-     * 生成机器ID
+     * 生成机器ID.
      *
+     * @param dataId   数据标识
+     * @param maxWorkerId 机器ID最大值
      * @return workId
      */
-    private static long generateWorkId(long dataId, long maxWorkerId) {
+    public static long generateWorkId(final long dataId, final long maxWorkerId) {
         StringBuilder result = new StringBuilder(String.valueOf(dataId));
         String name = ManagementFactory.getRuntimeMXBean().getName();
         if (!name.isEmpty()) {
             /*
-             * GET jvmPid
+             * GET jvmPid.
              */
             result.append(name.split("@")[0]);
         }
         /*
-         * MAC + PID 的 hashcode 获取16个低位
+         * MAC + PID 的 hashcode 获取16个低位.
          */
         return (result.toString().hashCode() & 0xffff) % (maxWorkerId + 1);
     }

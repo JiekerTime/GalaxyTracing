@@ -15,22 +15,25 @@
  * limitations under the License.
  */
 
-package org.example.galaxytracing.common.constant;
+package org.example.galaxytracing.agent.trace;
 
-import org.junit.Test;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.example.galaxytracing.agent.trace.impl.SnowflakeTraceStorage;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
-public final class SnowflakeIdTest {
-    
-    @Test
-    public void assertGenerateDataId() {
-        assertThat(SnowflakeId.generateDataId(31), is(20L));
-    }
-    
-    @Test
-    public void assertGenerateWorkId() {
-        assertThat(SnowflakeId.generateWorkId(20L, 31), is(11L));
+/**
+ * 链路存储工厂类.
+ *
+ * @author JiekerTime
+ */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class TraceStorageFactory {
+    /**
+     * 获取实例.
+     *
+     * @return 雪花算法实例
+     */
+    public static TraceStorage getSnowflakeTraceStorage() {
+        return new SnowflakeTraceStorage();
     }
 }

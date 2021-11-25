@@ -15,14 +15,12 @@
  * limitations under the License.
  */
 
-package org.example.galaxytracing.agent.trace;
+package org.example.galaxytracing.agent.bootstrap;
 
 /**
- * 链路适配器
+ * 探针入口.
  *
  * @author JiekerTime
- * @since 2021/11/25 19:30
  */
-public interface TraceAdapter {
-
+public class Agent {
 }
