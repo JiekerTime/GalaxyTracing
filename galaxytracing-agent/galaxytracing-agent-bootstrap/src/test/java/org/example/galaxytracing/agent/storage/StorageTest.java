@@ -15,12 +15,8 @@
  * limitations under the License.
  */
 
-package org.example.galaxytracing.agent.bootstrap;
+package org.example.galaxytracing.agent.storage;
 
-/**
- * 探针入口.
- *
- * @author JiekerTime
- */
-public class Agent {
+public final class StorageTest {
+
 }

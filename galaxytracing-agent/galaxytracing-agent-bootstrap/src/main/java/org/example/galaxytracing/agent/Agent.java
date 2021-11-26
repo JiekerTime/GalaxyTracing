@@ -15,25 +15,12 @@
  * limitations under the License.
  */
 
-package org.example.galaxytracing.agent.trace;
-
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import org.example.galaxytracing.agent.trace.impl.SnowflakeTraceStorage;
+package org.example.galaxytracing.agent;
 
 /**
- * 链路存储工厂类.
+ * 探针入口.
  *
  * @author JiekerTime
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class TraceStorageFactory {
-    /**
-     * 获取实例.
-     *
-     * @return 雪花算法实例
-     */
-    public static TraceStorage getSnowflakeTraceStorage() {
-        return new SnowflakeTraceStorage();
-    }
+public class Agent {
 }

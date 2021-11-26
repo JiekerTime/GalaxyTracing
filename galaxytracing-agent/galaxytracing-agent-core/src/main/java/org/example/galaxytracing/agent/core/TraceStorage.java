@@ -15,64 +15,78 @@
  * limitations under the License.
  */
 
-package org.example.galaxytracing.agent.trace;
+package org.example.galaxytracing.agent.core;
 
 import java.util.Map;
 import java.util.Set;
 
 /**
- * 链路数据存储适配器.
+ * Trace Data Storage.
  *
  * @author JiekerTime
  */
 public interface TraceStorage {
     /**
-     * 放入值.
+     * Putting data into the storage.
      *
-     * @param value 存储的值
-     * @return traceId
+     * @param key  key
+     * @param data data
      */
-    String put(String value);
+    void put(String key, String data);
     
     /**
-     * 根据traceId取出值.
+     * Get the data according to the key.
      *
-     * @param traceId traceId
-     * @return 存储的值
+     * @param key key
+     * @return data
      */
-    String get(String traceId);
+    String get(String key);
     
     /**
-     * 删除TraceId对应的值.
+     * Remove the data matching the key.
      *
-     * @param traceId traceId
+     * @param key key
      */
-    void remove(String traceId);
+    void remove(String key);
     
     /**
-     * 清除缓存.
+     * Clear all entries in the storage.
      */
     void clear();
     
     /**
-     * 获取存储数据的Map.
+     * Get the Map storing the data.
      *
-     * @return map
+     * @return dataMap
      */
-    Map<String, String> getCopyOfContextMap();
+    Map<String, String> getDataMap();
     
     /**
-     * 放入存储值的Map.
+     * Set the Map that stores the data.
      *
-     * @param contextMap contextMap.
+     * @param dataMap dataMap.
      */
-    void setContextMap(Map<String, String> contextMap);
+    void setDataMap(Map<String, String> dataMap);
     
     /**
-     * 获取所有TraceId.
+     * Get the keys of the storage.
      *
-     * @return TraceId
+     * @return keys
      */
-    Set<String> getTraceIds();
+    Set<String> getKeys();
+    
+    /**
+     * Get the traceId of the storage.
+     *
+     * @return traceId
+     */
+    String getTraceId();
+    
+    /**
+     * Reset the traceId in the storage.
+     *
+     * @param traceId traceId
+     */
+    void resetTraceId(String traceId);
     
 }

@@ -15,8 +15,30 @@
  * limitations under the License.
  */
 
-package org.example.galaxytracing.common.constant;
+package org.example.galaxytracing.agent.core;
 
-public final class SnowflakeIdTest {
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.example.galaxytracing.agent.core.impl.DefaultTraceStorage;
 
+/**
+ * This implementation is bound to {@link DefaultTraceStorage}.
+ *
+ * @author JiekerTime
+ */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class TraceStorageBinder {
+    /**
+     * The unique instance of this class.
+     */
+    public static final TraceStorageBinder SINGLETON = new TraceStorageBinder();
+    
+    /**
+     * The instance of trace data storage.
+     *
+     * @return TraceStorage
+     */
+    public TraceStorage getTraceStorage() {
+        return new DefaultTraceStorage();
+    }
 }
