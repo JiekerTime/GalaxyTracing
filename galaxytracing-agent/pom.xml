@@ -17,7 +17,8 @@
   ~
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>GalaxyTracing</artifactId>
         <groupId>org.example.galaxytracing</groupId>
@@ -30,8 +31,17 @@
     <packaging>pom</packaging>
     
     <modules>
-        <module>galaxytracing-agent-core</module>
+        <module>galaxytracing-agent-common</module>
         <module>galaxytracing-agent-bootstrap</module>
+        <module>galaxytracing-agent-reporter</module>
+        <module>galaxytracing-agent-storage</module>
     </modules>
-
+    
+    <dependencies>
+        <dependency>
+            <groupId>org.example.galaxytracing</groupId>
+            <artifactId>galaxytracing-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 </project>

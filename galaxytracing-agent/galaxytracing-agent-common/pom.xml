@@ -26,17 +26,12 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     
-    <artifactId>galaxytracing-agent-bootstrap</artifactId>
-
+    <artifactId>galaxytracing-agent-common</artifactId>
+    
     <dependencies>
         <dependency>
             <groupId>org.example.galaxytracing</groupId>
-            <artifactId>galaxytracing-agent-reporter</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.example.galaxytracing</groupId>
-            <artifactId>galaxytracing-agent-storage</artifactId>
+            <artifactId>galaxytracing-common</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
