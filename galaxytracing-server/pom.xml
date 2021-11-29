@@ -32,4 +32,11 @@
         <module>galaxytracing-server-collector</module>
     </modules>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.example.galaxytracing</groupId>
+            <artifactId>galaxytracing-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 </project>

@@ -28,11 +28,4 @@
     
     <artifactId>galaxytracing-agent-storage</artifactId>
     
-    <dependencies>
-        <dependency>
-            <groupId>org.example.galaxytracing</groupId>
-            <artifactId>galaxytracing-agent-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
 </project>

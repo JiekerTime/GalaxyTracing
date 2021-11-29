@@ -60,10 +60,5 @@
             <artifactId>netty-codec-http2</artifactId>
         </dependency>
     
-        <dependency>
-            <groupId>org.example.galaxytracing</groupId>
-            <artifactId>galaxytracing-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 </project>

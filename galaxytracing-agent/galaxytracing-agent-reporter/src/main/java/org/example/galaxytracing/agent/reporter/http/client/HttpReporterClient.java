@@ -18,7 +18,7 @@ import com.huawei.shade.org.apache.http.protocol.HttpContext;
 import com.huawei.shade.org.apache.http.util.EntityUtils;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.galaxytracing.core.exception.GalaxyTracingException;
+import org.example.galaxytracing.common.exception.GalaxyTracingException;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

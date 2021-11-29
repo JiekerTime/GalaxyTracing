@@ -19,10 +19,10 @@ package org.example.galaxytracing.agent.storage.impl;
 
 import com.huawei.shade.com.alibaba.fastjson.JSONObject;
 import lombok.NoArgsConstructor;
-import org.example.galaxytracing.agent.common.constant.AgentErrorMessage;
-import org.example.galaxytracing.agent.common.traceid.SnowflakeId;
 import org.example.galaxytracing.agent.storage.TraceStorage;
-import org.example.galaxytracing.core.exception.GalaxyTracingException;
+import org.example.galaxytracing.common.constant.GalaxyTracingAgentMessage;
+import org.example.galaxytracing.common.exception.GalaxyTracingException;
+import org.example.galaxytracing.common.traceid.SnowflakeId;
 
 import java.util.Map;
 import java.util.Set;
@@ -64,7 +64,7 @@ public final class DefaultTraceStorage implements TraceStorage {
     public String get(final String key) throws GalaxyTracingException {
         Map<String, String> map;
         if (((map = dataMap.get()) == null) || map.isEmpty()) {
-            throw new GalaxyTracingException(AgentErrorMessage.STORAGE_NOT_INIT_ERROR);
+            throw new GalaxyTracingException(GalaxyTracingAgentMessage.STORAGE_NOT_INIT_ERROR);
         }
         return map.get(key);
     }
@@ -73,7 +73,7 @@ public final class DefaultTraceStorage implements TraceStorage {
     public void remove(final String key) throws GalaxyTracingException {
         Map<String, String> oldMap;
         if (((oldMap = dataMap.get()) == null) || oldMap.isEmpty()) {
-            throw new GalaxyTracingException(AgentErrorMessage.STORAGE_NOT_INIT_ERROR);
+            throw new GalaxyTracingException(GalaxyTracingAgentMessage.STORAGE_NOT_INIT_ERROR);
         }
         Integer lastOp = getAndSetLastOperation();
         if (wasLastOpReadOrNull(lastOp)) {
@@ -121,7 +121,7 @@ public final class DefaultTraceStorage implements TraceStorage {
     public String getTraceId() {
         Map<String, String> map;
         if (((map = dataMap.get()) == null) || map.isEmpty()) {
-            throw new GalaxyTracingException(AgentErrorMessage.STORAGE_NOT_INIT_ERROR);
+            throw new GalaxyTracingException(GalaxyTracingAgentMessage.STORAGE_NOT_INIT_ERROR);
         }
         return map.get(TRACE_ID);
     }
@@ -131,7 +131,7 @@ public final class DefaultTraceStorage implements TraceStorage {
         Map<String, String> dataMap = getDataMap();
         lastOperation.set(WRITE_OPERATION);
         if (dataMap == null || dataMap.isEmpty()) {
-            throw new GalaxyTracingException(AgentErrorMessage.STORAGE_NOT_INIT_ERROR);
+            throw new GalaxyTracingException(GalaxyTracingAgentMessage.STORAGE_NOT_INIT_ERROR);
         } else {
             dataMap.put(TRACE_ID, traceId);
         }

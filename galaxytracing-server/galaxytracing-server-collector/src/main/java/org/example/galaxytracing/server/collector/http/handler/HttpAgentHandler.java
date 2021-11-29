@@ -1,3 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.example.galaxytracing.server.collector.http.handler;
 
 import io.netty.buffer.Unpooled;
@@ -13,8 +30,8 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.example.galaxytracing.core.thread.ExecutorServiceManager;
-import org.example.galaxytracing.server.collector.constant.ServerMessage;
+import org.example.galaxytracing.common.thread.ExecutorServiceManager;
+import org.example.galaxytracing.common.constant.GalaxyTracingServerMessage;
 
 /**
  * HTTP handler of Agent.
@@ -42,9 +59,9 @@ public final class HttpAgentHandler extends ChannelInboundHandlerAdapter {
             if (DEFAULT_URI_PATH.equals(httpRequest.uri()) && HttpMethod.POST.equals(httpRequest.method())) {
                 String data = httpRequest.content().toString(CharsetUtil.UTF_8);
                 log.info("Received data :{}", data);
-                send(ServerMessage.RESPONSE_OK, ctx, HttpResponseStatus.OK);
+                send(GalaxyTracingServerMessage.RESPONSE_OK, ctx, HttpResponseStatus.OK);
             } else {
-                send(ServerMessage.WRONG_REQUEST_ERROR, ctx, HttpResponseStatus.BAD_REQUEST);
+                send(GalaxyTracingServerMessage.WRONG_REQUEST_ERROR, ctx, HttpResponseStatus.BAD_REQUEST);
             }
         });
     }
