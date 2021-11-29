@@ -19,7 +19,7 @@ package org.example.galaxytracing.agent.common.traceid;
 
 import com.google.common.base.Preconditions;
 import lombok.SneakyThrows;
-import org.example.galaxytracing.common.excetion.GalaxyTracingException;
+import org.example.galaxytracing.core.exception.GalaxyTracingException;
 
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;

@@ -34,7 +34,7 @@
     <modules>
         <module>galaxytracing-server</module>
         <module>galaxytracing-agent</module>
-        <module>galaxytracing-common</module>
+        <module>galaxytracing-core</module>
     </modules>
     
     <properties>
@@ -50,8 +50,7 @@
         <opengauss.version>2.0.1-compatibility</opengauss.version>
         
         <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
-        <http.client.version>4.5.13</http.client.version>
-        <http.core.version>4.4.14</http.core.version>
+        <netty.version>4.1.69.Final</netty.version>
         
         <!-- Plugin versions -->
         <takari-maven-plugin.version>0.6.1</takari-maven-plugin.version>
@@ -147,17 +146,71 @@
                 <artifactId>jul-to-slf4j</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
-            
-<!--            <dependency>-->
-<!--                <groupId>org.apache.httpcomponents</groupId>-->
-<!--                <artifactId>httpclient</artifactId>-->
-<!--                <version>${http.client.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.httpcomponents</groupId>-->
-<!--                <artifactId>httpcore</artifactId>-->
-<!--                <version>${http.core.version}</version>-->
-<!--            </dependency>-->
+    
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-buffer</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-http</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-http2</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-socks</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-common</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-handler</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-handler-proxy</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-transport</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-transport-native-epoll</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-transport-native-epoll</artifactId>
+                <version>${netty.version}</version>
+                <classifier>linux-x86_64</classifier>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-transport-native-epoll</artifactId>
+                <version>${netty.version}</version>
+                <classifier>linux-aarch_64</classifier>
+                <scope>runtime</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     

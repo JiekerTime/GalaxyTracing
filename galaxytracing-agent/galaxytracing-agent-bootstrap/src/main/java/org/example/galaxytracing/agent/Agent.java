@@ -18,37 +18,39 @@
 package org.example.galaxytracing.agent;
 
 import com.google.common.base.Strings;
+import lombok.extern.slf4j.Slf4j;
 import org.example.galaxytracing.agent.common.constant.AgentErrorMessage;
 import org.example.galaxytracing.agent.reporter.Reporter;
 import org.example.galaxytracing.agent.storage.TraceStorage;
 import org.example.galaxytracing.agent.storage.TraceStorageBinder;
-import org.example.galaxytracing.common.excetion.GalaxyTracingException;
+import org.example.galaxytracing.core.exception.GalaxyTracingException;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Agent entry.
  *
  * @author JiekerTime
  */
+@Slf4j
 public final class Agent implements Serializable {
     
     private static final long serialVersionUID = -7914467893018071362L;
     
     private final TraceStorage traceStorage;
     
-    private final Queue<String> mq;
+    private final BlockingQueue<String> mq;
     
     private final Reporter reporter;
     
     public Agent() {
         traceStorage = TraceStorageBinder.INSTANCE.getTraceStorage();
-        mq = new SynchronousQueue<>();
+        mq = new LinkedBlockingQueue<>();
         reporter = new Reporter(mq);
         reporter.start();
     }
@@ -199,7 +201,7 @@ public final class Agent implements Serializable {
      *
      * @throws GalaxyTracingException System exception
      */
-    public void clear() {
+    public void clear() throws GalaxyTracingException {
         if (traceStorage == null) {
             throw new GalaxyTracingException(AgentErrorMessage.NULL_TRACE_STORAGE_ERROR);
         }
@@ -211,14 +213,14 @@ public final class Agent implements Serializable {
      *
      * @throws GalaxyTracingException System exception
      */
-    public void finish() {
+    public void finish() throws GalaxyTracingException {
         if (traceStorage == null) {
             throw new GalaxyTracingException(AgentErrorMessage.NULL_TRACE_STORAGE_ERROR);
         }
         if (!reporter.isAlive()) {
             throw new GalaxyTracingException(AgentErrorMessage.REPORTER_SHUTDOWN_ERROR);
         }
-        mq.add(traceStorage.clear());
+        mq.offer(traceStorage.clear());
     }
     
     /**

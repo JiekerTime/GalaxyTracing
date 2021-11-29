@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 import org.example.galaxytracing.agent.common.constant.AgentErrorMessage;
 import org.example.galaxytracing.agent.common.traceid.SnowflakeId;
 import org.example.galaxytracing.agent.storage.TraceStorage;
-import org.example.galaxytracing.common.excetion.GalaxyTracingException;
+import org.example.galaxytracing.core.exception.GalaxyTracingException;
 
 import java.util.Map;
 import java.util.Set;

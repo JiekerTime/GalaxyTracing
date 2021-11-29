@@ -1,10 +1,14 @@
 package org.example.galaxytracing.agent.common.constant;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 /**
  * Error Message Constant.
  *
  * @author JiekerTime
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class AgentErrorMessage {
     
     public static final String NULL_TRACE_STORAGE_ERROR = "TraceStorage is null causing the operation to fail. This may be due to a failed initialization.";

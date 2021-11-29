@@ -1,34 +1,43 @@
 package org.example.galaxytracing.agent.reporter;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.galaxytracing.agent.reporter.http.client.HttpReporterClient;
+import org.example.galaxytracing.core.exception.GalaxyTracingException;
 
-import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * Timed send of data in the queue.
  *
  * @author JiekerTime
  */
+@Slf4j
 public final class Reporter extends Thread {
     
-    private static final String DEFAULT_URL = "https://localhost:9000/";
+    private static final String DEFAULT_URL = "http://localhost:9000/collector";
     
-    private final Queue<String> queue;
+    private final BlockingQueue<String> queue;
     
     private volatile boolean shutdown;
     
-    public Reporter(final Queue<String> queue) {
+    public Reporter(final BlockingQueue<String> queue) {
         super();
         this.queue = queue;
     }
     
     @Override
     public void run() {
-        while (!shutdown) {
+        while (!shutdown || !queue.isEmpty()) {
             if (!queue.isEmpty()) {
-                HttpReporterClient.doPost(DEFAULT_URL, queue.poll());
+                try {
+                    HttpReporterClient.doPost(DEFAULT_URL, queue.poll());
+                } catch (GalaxyTracingException ex) {
+                    log.error(ex.getMessage());
+                }
             }
         }
+        HttpReporterClient.shutdown();
+        log.info("Reporter is closed.");
     }
     
     /**
@@ -36,7 +45,6 @@ public final class Reporter extends Thread {
      */
     public void shutdown() {
         shutdown = true;
-        HttpReporterClient.shutdown();
         synchronized (this) {
             notifyAll();
         }

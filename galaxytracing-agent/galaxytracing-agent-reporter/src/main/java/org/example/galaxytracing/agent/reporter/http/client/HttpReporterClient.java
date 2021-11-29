@@ -4,7 +4,6 @@ import com.huawei.shade.com.cloud.sdk.http.HttpMethodName;
 import com.huawei.shade.com.cloud.sdk.util.StringUtils;
 import com.huawei.shade.org.apache.http.HeaderElement;
 import com.huawei.shade.org.apache.http.HeaderElementIterator;
-import com.huawei.shade.org.apache.http.HttpHeaders;
 import com.huawei.shade.org.apache.http.HttpResponse;
 import com.huawei.shade.org.apache.http.client.HttpClient;
 import com.huawei.shade.org.apache.http.client.methods.RequestBuilder;
@@ -18,11 +17,11 @@ import com.huawei.shade.org.apache.http.protocol.HTTP;
 import com.huawei.shade.org.apache.http.protocol.HttpContext;
 import com.huawei.shade.org.apache.http.util.EntityUtils;
 import lombok.NoArgsConstructor;
-import org.example.galaxytracing.agent.reporter.http.auth.Auth;
-import org.example.galaxytracing.agent.reporter.http.auth.impl.BasicAuth;
-import org.example.galaxytracing.common.excetion.GalaxyTracingException;
+import lombok.extern.slf4j.Slf4j;
+import org.example.galaxytracing.core.exception.GalaxyTracingException;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -30,6 +29,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author JiekerTime
  */
+@Slf4j
 @NoArgsConstructor
 public final class HttpReporterClient {
     /**
@@ -44,15 +44,11 @@ public final class HttpReporterClient {
     
     private static final HttpClient HTTP_CLIENT;
     
-    private static final Auth AUTH;
-    
     private static final PoolingHttpClientConnectionManager CONNECTION_MANAGER;
     
     private static final IdleConnectionMonitor CONNECTION_MONITOR;
     
     static {
-        // TODO add config
-        AUTH = new BasicAuth("root", "root");
         CONNECTION_MANAGER = new PoolingHttpClientConnectionManager();
         CONNECTION_MANAGER.setMaxTotal(MAX_CONN_COUNT);
         CONNECTION_MANAGER.setDefaultMaxPerRoute(MAX_ROUTE_CONN_COUNT);
@@ -60,28 +56,34 @@ public final class HttpReporterClient {
                 .setKeepAliveStrategy(HttpReporterClient::getKeepAliveDuration).build();
         CONNECTION_MONITOR = new IdleConnectionMonitor(CONNECTION_MANAGER);
         CONNECTION_MONITOR.start();
+        log.info("Agent's connection monitoring service start success!");
     }
     
     /**
      * Sending data to the server.
      *
-     * @param url url
+     * @param url   url
      * @param value value
      * @throws GalaxyTracingException System Exception
      */
     public static void doPost(final String url, final String value) throws GalaxyTracingException {
         RequestBuilder reqBuilder = RequestBuilder.create(HttpMethodName.POST.toString())
                 .setUri(url)
-                .addHeader(HttpHeaders.AUTHORIZATION, AUTH.getToken())
                 .addHeader("Accept", ContentType.APPLICATION_JSON.toString())
                 .addHeader("Content-type", ContentType.APPLICATION_JSON.toString());
-        if (StringUtils.isNullOrEmpty(value)) {
+        if (!StringUtils.isNullOrEmpty(value)) {
             reqBuilder.setEntity(new StringEntity(value, ContentType.APPLICATION_JSON));
         }
+        log.info("Posting data {}", value);
         try {
-            EntityUtils.consume(HTTP_CLIENT.execute(reqBuilder.build()).getEntity());
+            HttpResponse response = HTTP_CLIENT.execute(reqBuilder.build());
+            String msg = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+            if (log.isDebugEnabled()) {
+                log.info("Response from GalaxyTracing server: {}", msg);
+            }
+            EntityUtils.consume(response.getEntity());
         } catch (IOException e) {
-            throw new GalaxyTracingException("发送数据发生异常, case:%s", e.getLocalizedMessage(), e);
+            throw new GalaxyTracingException("An exception occurred in posting data, cause:%s", e.getLocalizedMessage(), e);
         }
     }
     
@@ -89,7 +91,7 @@ public final class HttpReporterClient {
      * Shutdown the reporter server.
      */
     public static void shutdown() {
-        CONNECTION_MANAGER.shutdown();
+        CONNECTION_MONITOR.shutdown();
     }
     
     private static long getKeepAliveDuration(final HttpResponse response, final HttpContext httpContext) {
@@ -135,7 +137,9 @@ public final class HttpReporterClient {
                     }
                 }
             } catch (InterruptedException ex) {
-                /* terminate */
+                log.error("Agent IdleConnectionMonitor got an exception :{}", ex.getLocalizedMessage());
+            } finally {
+                connectionManager.shutdown();
             }
         }
         
