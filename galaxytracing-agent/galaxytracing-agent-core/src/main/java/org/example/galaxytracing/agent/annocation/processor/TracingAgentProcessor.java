@@ -18,16 +18,12 @@
 package org.example.galaxytracing.agent.annocation.processor;
 
 import com.google.auto.service.AutoService;
-import com.sun.tools.javac.api.JavacTrees;
-import com.sun.tools.javac.code.Flags;
-import com.sun.tools.javac.processing.JavacProcessingEnvironment;
-import com.sun.tools.javac.tree.JCTree;
-import com.sun.tools.javac.tree.TreeMaker;
-import com.sun.tools.javac.tree.TreeTranslator;
-import com.sun.tools.javac.util.Context;
-import com.sun.tools.javac.util.List;
-import com.sun.tools.javac.util.Names;
-import org.example.galaxytracing.agent.annocation.TracingAgent;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.FieldSpec;
+import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.TypeSpec;
+import org.example.galaxytracing.agent.TracingAgent;
+import org.example.galaxytracing.agent.annocation.Agent;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Processor;
@@ -35,7 +31,13 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
+import javax.tools.JavaFileObject;
+import java.io.Writer;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -45,36 +47,85 @@ import java.util.Set;
  */
 @AutoService(Processor.class)
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
-@SupportedAnnotationTypes("org.example.galaxytracing.agent.annocation.TracingAgent")
+@SupportedAnnotationTypes("org.example.galaxytracing.agent.annocation.Agent")
 public final class TracingAgentProcessor extends AbstractProcessor {
+    
+    private static final String TRACING_AGENT_SUFFIX = "$$TracingAgent";
     
     @Override
     public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
-        Context context = ((JavacProcessingEnvironment) processingEnv).getContext();
-        TreeMaker treeMaker = TreeMaker.instance(context);
-        Names names = Names.instance(context);
         if (!roundEnv.processingOver()) {
-            roundEnv.getElementsAnnotatedWith(TracingAgent.class).stream().map(element -> JavacTrees.instance(processingEnv)
-                    .getTree(element)).forEach(tree -> tree.accept(new TreeTranslator() {
-                @Override
-                public void visitClassDef(final JCTree.JCClassDecl jcClassDecl) {
-                    JCTree agentVar = treeMaker.VarDef(
-                            treeMaker.Modifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL),
-                            names.fromString("tracingAgent"),
-                            treeMaker.Ident(names.fromString(org.example.galaxytracing.agent.TracingAgent.class.getSimpleName())),
-                            treeMaker.NewClass(
-                                    null,
-                                    List.nil(),
-                                    treeMaker.Ident(names.fromString(org.example.galaxytracing.agent.TracingAgent.class.getSimpleName())),
-                                    List.nil(),
-                                    null
-                            )
-                    );
-                    jcClassDecl.defs = jcClassDecl.defs.append(agentVar);
-                    super.visitClassDef(jcClassDecl);
-                }
-            }));
+            if (!roundEnv.processingOver()) {
+                roundEnv.getElementsAnnotatedWith(Agent.class).forEach(element -> {
+                    final FieldSpec agent = FieldSpec.builder(ClassName.get(TracingAgent.class), "agent")
+                            .addModifiers(Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
+                            .initializer("new $T()", ClassName.get(TracingAgent.class)).build();
+                    final TypeSpec typeSpec = TypeSpec.classBuilder(element.getSimpleName() + TRACING_AGENT_SUFFIX)
+                            .addModifiers(Modifier.PUBLIC)
+                            .addField(agent).build();
+                    final JavaFile javaFile = JavaFile.builder(processingEnv.getElementUtils().getPackageOf(element)
+                            .getQualifiedName().toString(), typeSpec).build();
+                    writeJavaFile(javaFile);
+                });
+            }
         }
         return true;
     }
+    
+    private void writeJavaFile(JavaFile javaFile) {
+        StringBuilder builder = new StringBuilder();
+        
+        JavaFileObject filerSourceFile = null;
+        
+        try {
+            builder.append(LICENSE_HEADER);
+            javaFile.writeTo(builder);
+            
+            String fileName = javaFile.packageName.isEmpty() ? javaFile.typeSpec.name : javaFile.packageName + "." + javaFile.typeSpec.name;
+            List<Element> originatingElements = javaFile.typeSpec.originatingElements;
+            filerSourceFile = processingEnv.getFiler().createSourceFile(fileName, originatingElements.toArray(new Element[0]));
+            
+            try (Writer writer = filerSourceFile.openWriter()) {
+                writer.write(builder.toString());
+            }
+            
+        } catch (Exception e) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Couldn't generate classes " + javaFile.packageName + '.' + javaFile.typeSpec.name);
+            e.printStackTrace();
+            
+            if (filerSourceFile != null) {
+                filerSourceFile.delete();
+            }
+            
+        }
+    }
+    
+    private static final String LICENSE_HEADER = "/* *****************************************************************************\n"
+            + " * Copyright (c) 2017 Evernote Corporation.\n"
+            + " * This software was generated by Evernote’s Android-State code generator\n"
+            + " * (available at https://github.com/evernote/android-state), which is made\n"
+            + " * available under the terms of the Eclipse Public License v1.0\n"
+            + " * (available at http://www.eclipse.org/legal/epl-v10.html).\n"
+            + " * For clarification, code generated by the Android-State code generator is\n"
+            + " * not subject to the Eclipse Public License and can be used subject to the\n"
+            + " * following terms:\n"
+            + " *\n"
+            + " * Permission is hereby granted, free of charge, to any person obtaining a copy\n"
+            + " * of this software and associated documentation files (the \"Software\"), to deal\n"
+            + " * in the Software without restriction, including without limitation the rights\n"
+            + " * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n"
+            + " * copies of the Software, and to permit persons to whom the Software is\n"
+            + " * furnished to do so, subject to the following conditions:\n"
+            + " *\n"
+            + " * The above copyright notice and this permission notice shall be included in all\n"
+            + " * copies or substantial portions of the Software.\n"
+            + " *\n"
+            + " * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n"
+            + " * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n"
+            + " * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n"
+            + " * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n"
+            + " * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n"
+            + " * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\n"
+            + " * SOFTWARE.\n"
+            + " *******************************************************************************/\n";
 }

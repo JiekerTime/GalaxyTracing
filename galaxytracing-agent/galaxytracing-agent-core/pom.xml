@@ -51,7 +51,12 @@
             <artifactId>tools</artifactId>
             <version>${compiler.version}</version>
             <scope>system</scope>
-            <systemPath>${systemPath}</systemPath>
+            <systemPath>${JAVA_HOME}/lib/tools.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup</groupId>
+            <artifactId>javapoet</artifactId>
+            <version>1.13.0</version>
         </dependency>
     </dependencies>
     
