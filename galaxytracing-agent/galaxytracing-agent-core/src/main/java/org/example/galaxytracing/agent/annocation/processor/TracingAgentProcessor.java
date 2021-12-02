@@ -27,11 +27,9 @@ import com.sun.tools.javac.tree.TreeTranslator;
 import com.sun.tools.javac.util.Context;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Names;
-import org.example.galaxytracing.agent.TracingAgent;
-import org.example.galaxytracing.agent.annocation.Agent;
+import org.example.galaxytracing.agent.annocation.TracingAgent;
 
 import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
@@ -47,38 +45,27 @@ import java.util.Set;
  */
 @AutoService(Processor.class)
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
-@SupportedAnnotationTypes("org.example.galaxytracing.agent.annocation.Agent")
+@SupportedAnnotationTypes("org.example.galaxytracing.agent.annocation.TracingAgent")
 public final class TracingAgentProcessor extends AbstractProcessor {
-    
-    private JavacTrees trees;
-    
-    private TreeMaker treeMaker;
-    
-    private Names names;
-    
-    @Override
-    public synchronized void init(final ProcessingEnvironment processingEnv) {
-        super.init(processingEnv);
-        this.trees = JavacTrees.instance(processingEnv);
-        Context context = ((JavacProcessingEnvironment) processingEnv).getContext();
-        this.treeMaker = TreeMaker.instance(context);
-        this.names = Names.instance(context);
-    }
     
     @Override
     public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
+        Context context = ((JavacProcessingEnvironment) processingEnv).getContext();
+        TreeMaker treeMaker = TreeMaker.instance(context);
+        Names names = Names.instance(context);
         if (!roundEnv.processingOver()) {
-            roundEnv.getElementsAnnotatedWith(Agent.class).stream().map(element -> trees.getTree(element)).forEach(tree -> tree.accept(new TreeTranslator() {
+            roundEnv.getElementsAnnotatedWith(TracingAgent.class).stream().map(element -> JavacTrees.instance(processingEnv)
+                    .getTree(element)).forEach(tree -> tree.accept(new TreeTranslator() {
                 @Override
                 public void visitClassDef(final JCTree.JCClassDecl jcClassDecl) {
                     JCTree agentVar = treeMaker.VarDef(
                             treeMaker.Modifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL),
                             names.fromString("tracingAgent"),
-                            treeMaker.Ident(names.fromString(TracingAgent.class.getSimpleName())),
+                            treeMaker.Ident(names.fromString(org.example.galaxytracing.agent.TracingAgent.class.getSimpleName())),
                             treeMaker.NewClass(
                                     null,
                                     List.nil(),
-                                    treeMaker.Ident(names.fromString(TracingAgent.class.getSimpleName())),
+                                    treeMaker.Ident(names.fromString(org.example.galaxytracing.agent.TracingAgent.class.getSimpleName())),
                                     List.nil(),
                                     null
                             )
