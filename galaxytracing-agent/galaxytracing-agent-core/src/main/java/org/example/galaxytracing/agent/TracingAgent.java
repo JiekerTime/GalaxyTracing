@@ -18,13 +18,13 @@
 package org.example.galaxytracing.agent;
 
 import com.google.common.base.Strings;
+import com.huawei.shade.com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.example.galaxytracing.agent.reporter.Reporter;
 import org.example.galaxytracing.agent.storage.TraceStorage;
 import org.example.galaxytracing.agent.storage.TraceStorageBinder;
 import org.example.galaxytracing.common.constant.GalaxyTracingAgentMessage;
 import org.example.galaxytracing.common.exception.GalaxyTracingException;
-import org.example.galaxytracing.common.utinitys.DataFormatTransfer;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
@@ -39,7 +39,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author JiekerTime
  */
 @Slf4j
-public final class Agent implements Serializable {
+public final class TracingAgent implements Serializable {
     
     private static final long serialVersionUID = -7914467893018071362L;
     
@@ -49,7 +49,7 @@ public final class Agent implements Serializable {
     
     private final Reporter reporter;
     
-    public Agent() {
+    public TracingAgent() {
         traceStorage = TraceStorageBinder.INSTANCE.getTraceStorage();
         mq = new LinkedBlockingQueue<>();
         reporter = new Reporter(mq);
@@ -69,7 +69,7 @@ public final class Agent implements Serializable {
         if (traceStorage == null) {
             throw new GalaxyTracingException(GalaxyTracingAgentMessage.NULL_TRACE_STORAGE_ERROR);
         }
-        final Map data = DataFormatTransfer.transObject2Map(obj);
+        final Map data = JSONObject.parseObject(JSONObject.toJSONString(obj), Map.class);
         for (Object key : data.entrySet()) {
             Object value = data.get(key);
             traceStorage.put(String.valueOf(key), String.valueOf(value));

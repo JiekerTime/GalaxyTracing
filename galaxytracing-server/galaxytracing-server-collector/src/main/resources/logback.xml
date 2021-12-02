@@ -30,7 +30,7 @@
     
     <logger name="com.atomikos" level="error" />
     
-    <logger name="io.netty" level="error" />
+    <logger name="io.netty" level="debug" />
     
     <root>
         <level value="info" />
