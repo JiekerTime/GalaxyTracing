@@ -57,12 +57,14 @@ public final class TracingAgentProcessor extends AbstractProcessor {
         if (!roundEnv.processingOver()) {
             if (!roundEnv.processingOver()) {
                 roundEnv.getElementsAnnotatedWith(Agent.class).forEach(element -> {
-                    final FieldSpec agent = FieldSpec.builder(ClassName.get(TracingAgent.class), "agent")
+                    final FieldSpec agent = FieldSpec.builder(ClassName.get(TracingAgent.class), "tracingAgent")
+                            
                             .addModifiers(Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
                             .initializer("new $T()", ClassName.get(TracingAgent.class)).build();
                     final TypeSpec typeSpec = TypeSpec.classBuilder(element.getSimpleName() + TRACING_AGENT_SUFFIX)
-                            .addModifiers(Modifier.PUBLIC)
+                            .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                             .addField(agent).build();
+                    
                     final JavaFile javaFile = JavaFile.builder(processingEnv.getElementUtils().getPackageOf(element)
                             .getQualifiedName().toString(), typeSpec).build();
                     writeJavaFile(javaFile);
@@ -75,7 +77,7 @@ public final class TracingAgentProcessor extends AbstractProcessor {
     private void writeJavaFile(JavaFile javaFile) {
         StringBuilder builder = new StringBuilder();
         
-        JavaFileObject filerSourceFile = null;
+        JavaFileObject sourceFile = null;
         
         try {
             builder.append(LICENSE_HEADER);
@@ -83,18 +85,16 @@ public final class TracingAgentProcessor extends AbstractProcessor {
             
             String fileName = javaFile.packageName.isEmpty() ? javaFile.typeSpec.name : javaFile.packageName + "." + javaFile.typeSpec.name;
             List<Element> originatingElements = javaFile.typeSpec.originatingElements;
-            filerSourceFile = processingEnv.getFiler().createSourceFile(fileName, originatingElements.toArray(new Element[0]));
+            sourceFile = processingEnv.getFiler().createSourceFile(fileName, originatingElements.toArray(new Element[0]));
             
-            try (Writer writer = filerSourceFile.openWriter()) {
+            try (Writer writer = sourceFile.openWriter()) {
                 writer.write(builder.toString());
             }
             
         } catch (Exception e) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Couldn't generate classes " + javaFile.packageName + '.' + javaFile.typeSpec.name);
-            e.printStackTrace();
-            
-            if (filerSourceFile != null) {
-                filerSourceFile.delete();
+            if (sourceFile != null) {
+                sourceFile.delete();
             }
             
         }
