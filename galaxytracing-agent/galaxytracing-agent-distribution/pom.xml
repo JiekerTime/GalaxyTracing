@@ -31,7 +31,7 @@
     <dependencies>
         <dependency>
             <groupId>org.example.galaxytracing</groupId>
-            <artifactId>galaxytracing-agent-core</artifactId>
+            <artifactId>galaxytracing-agent-bootstrap</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

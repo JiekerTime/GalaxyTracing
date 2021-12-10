@@ -29,9 +29,10 @@
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
     <modules>
-        <module>galaxytracing-server-collector</module>
-        <module>galaxytracing-server-core</module>
-        <module>galaxytracing-server-storage</module>
+        <module>galaxytracing-server-backend</module>
+        <module>galaxytracing-server-center</module>
+        <module>galaxytracing-server-frontend</module>
+        <module>galaxytracing-server-bootstrap</module>
     </modules>
 
     <dependencies>
