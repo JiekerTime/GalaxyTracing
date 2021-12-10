@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.example.galaxytracing.common.constant;
+package org.example.galaxytracing.infra.common.constant;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

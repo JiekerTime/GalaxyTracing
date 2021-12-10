@@ -34,7 +34,7 @@
     <modules>
         <module>galaxytracing-server</module>
         <module>galaxytracing-agent</module>
-        <module>galaxytracing-common</module>
+        <module>galaxytracing-infra</module>
     </modules>
     
     <properties>

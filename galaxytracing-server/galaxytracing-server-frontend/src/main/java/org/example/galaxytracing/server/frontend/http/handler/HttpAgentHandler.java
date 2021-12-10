@@ -30,8 +30,8 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.example.galaxytracing.common.thread.ExecutorServiceManager;
-import org.example.galaxytracing.common.constant.GalaxyTracingServerMessage;
+import org.example.galaxytracing.infra.common.constant.GalaxyTracingServerMessage;
+import org.example.galaxytracing.infra.common.thread.ExecutorServiceManager;
 
 /**
  * HTTP handler of Agent.

@@ -19,7 +19,7 @@ package org.example.galaxytracing.agent.reporter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.galaxytracing.agent.reporter.http.client.HttpReporterClient;
-import org.example.galaxytracing.common.exception.GalaxyTracingException;
+import org.example.galaxytracing.infra.common.exception.GalaxyTracingException;
 
 import java.util.concurrent.BlockingQueue;
 

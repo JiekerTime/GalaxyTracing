@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-package org.example.galaxytracing.common.traceid;
+package org.example.galaxytracing.infra.common.traceid;
 
 import com.google.common.base.Preconditions;
 import lombok.SneakyThrows;
-import org.example.galaxytracing.common.exception.GalaxyTracingException;
+import org.example.galaxytracing.infra.common.exception.GalaxyTracingException;
 
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;

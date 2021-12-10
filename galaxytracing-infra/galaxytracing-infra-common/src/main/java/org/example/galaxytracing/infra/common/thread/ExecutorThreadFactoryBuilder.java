@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.example.galaxytracing.common.thread;
+package org.example.galaxytracing.infra.common.thread;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.AccessLevel;

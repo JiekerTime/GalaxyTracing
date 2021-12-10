@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.example.galaxytracing.common.constant;
+package org.example.galaxytracing.infra.common.constant;
 
 /**
  * 服务器端消息.

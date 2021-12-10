@@ -38,7 +38,7 @@
     <dependencies>
         <dependency>
             <groupId>org.example.galaxytracing</groupId>
-            <artifactId>galaxytracing-common</artifactId>
+            <artifactId>galaxytracing-infra-common</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

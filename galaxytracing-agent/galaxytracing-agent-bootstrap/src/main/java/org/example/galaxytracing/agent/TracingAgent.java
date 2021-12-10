@@ -23,8 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.galaxytracing.agent.core.storage.TraceStorage;
 import org.example.galaxytracing.agent.core.storage.TraceStorageBinder;
 import org.example.galaxytracing.agent.reporter.Reporter;
-import org.example.galaxytracing.common.constant.GalaxyTracingAgentMessage;
-import org.example.galaxytracing.common.exception.GalaxyTracingException;
+import org.example.galaxytracing.infra.common.constant.GalaxyTracingAgentMessage;
+import org.example.galaxytracing.infra.common.exception.GalaxyTracingException;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;

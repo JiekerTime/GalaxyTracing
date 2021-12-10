@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.example.galaxytracing.common.exception;
+package org.example.galaxytracing.infra.common.exception;
 
 /**
  * Basic exception of GalaxyTracing.
