@@ -17,7 +17,7 @@
 
 <assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.0 http://maven.apache.org/xsd/assembly-2.1.0.xsd">
-    <id>make-assembly</id>
+    <id>galaxytracing-agent-jar</id>
     <formats>
         <format>jar</format>
     </formats>
@@ -29,12 +29,20 @@
             <useProjectArtifact>true</useProjectArtifact>
             <unpack>true</unpack>
             <scope>runtime</scope>
+            <excludes>
+                <exclude>slf4j*</exclude>
+                <exclude>log4j</exclude>
+            </excludes>
         </dependencySet>
         <dependencySet>
             <outputDirectory>/</outputDirectory>
             <useProjectArtifact>true</useProjectArtifact>
             <unpack>true</unpack>
             <scope>system</scope>
+            <excludes>
+                <exclude>slf4j*</exclude>
+                <exclude>log4j</exclude>
+            </excludes>
         </dependencySet>
     </dependencySets>
 </assembly>

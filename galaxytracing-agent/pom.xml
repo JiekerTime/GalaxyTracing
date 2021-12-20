@@ -34,7 +34,6 @@
         <module>galaxytracing-agent-bootstrap</module>
         <module>galaxytracing-agent-reporter</module>
         <module>galaxytracing-agent-core</module>
-        <module>galaxytracing-agent-distribution</module>
     </modules>
     
     <properties>

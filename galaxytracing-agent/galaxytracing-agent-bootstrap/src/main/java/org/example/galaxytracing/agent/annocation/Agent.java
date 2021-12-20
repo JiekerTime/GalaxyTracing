@@ -30,5 +30,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 public @interface Agent {
+    /**
+     * Configuration file filename.
+     *
+     * @return file filename
+     */
     String fileName() default "";
 }
