@@ -15,20 +15,14 @@
  * limitations under the License.
  */
 
-package org.example.galaxytracing.agent.annocation;
+package org.example.galaxytracing.infra.config.pojo.impl;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.example.galaxytracing.infra.config.pojo.ConfigurationPojo;
 
 /**
- * TracingAgent annotation class.
+ * Server pojo of agent.
  *
  * @author JiekerTime
  */
-@Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.TYPE)
-public @interface Agent {
-    String fileName() default "";
+public final class ServerConfigurationPojo implements ConfigurationPojo {
 }

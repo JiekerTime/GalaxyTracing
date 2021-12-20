@@ -49,7 +49,7 @@ public final class DefaultTraceStorage implements TraceStorage {
     private final SnowflakeId snowflakeId = new SnowflakeId();
     
     @Override
-    public void put(final String key, final String data) {
+    public DefaultTraceStorage put(final String key, final String data) {
         Map<String, String> oldMap = dataMap.get();
         Integer lastOp = getAndSetLastOperation();
         if (wasLastOpReadOrNull(lastOp) || oldMap == null) {
@@ -58,6 +58,7 @@ public final class DefaultTraceStorage implements TraceStorage {
         } else {
             oldMap.put(key, data);
         }
+        return this;
     }
     
     @Override

@@ -28,6 +28,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Executor service manager.
+ *
+ * @author JiekerTime
  */
 @Getter
 public final class ExecutorServiceManager {

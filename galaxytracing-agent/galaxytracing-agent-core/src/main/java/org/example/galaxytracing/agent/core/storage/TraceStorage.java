@@ -17,6 +17,8 @@
 
 package org.example.galaxytracing.agent.core.storage;
 
+import org.example.galaxytracing.agent.core.storage.impl.DefaultTraceStorage;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -31,8 +33,9 @@ public interface TraceStorage {
      *
      * @param key  key
      * @param data data
+     * @return default storage
      */
-    void put(String key, String data);
+    DefaultTraceStorage put(String key, String data);
     
     /**
      * Get the data according to the key.
