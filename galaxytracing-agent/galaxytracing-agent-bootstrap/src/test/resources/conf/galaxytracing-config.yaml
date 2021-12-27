@@ -15,11 +15,11 @@
 # limitations under the License.
 
 basic:
-  tracingType: DEFAULT
+  tracingType: default
   logging: true
 
 reporter:
-  type: DIRECT
+  type: direct
   props:
     url: http://localhost:9000/collector
     max_conn_count: 100

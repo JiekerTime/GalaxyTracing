@@ -19,7 +19,10 @@ package org.example.galaxytracing.agent.reporter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.galaxytracing.agent.reporter.http.client.HttpReporterClient;
+import org.example.galaxytracing.agent.reporter.http.client.IReporterClient;
 import org.example.galaxytracing.infra.common.exception.GalaxyTracingException;
+import org.example.galaxytracing.infra.config.constant.AgentReporterValuesConstant;
+import org.example.galaxytracing.infra.config.entity.agent.ReporterConfig;
 import org.example.galaxytracing.infra.config.entity.impl.AgentConfiguration;
 
 import java.util.concurrent.BlockingQueue;
@@ -32,18 +35,27 @@ import java.util.concurrent.BlockingQueue;
 @Slf4j
 public final class Reporter extends Thread {
     
-    private static final String DEFAULT_URL = "http://localhost:9000/collector";
-    
     private final BlockingQueue<String> queue;
     
-    private final HttpReporterClient client;
+    private final IReporterClient client;
     
     private volatile boolean shutdown;
     
     public Reporter(final BlockingQueue<String> queue, final AgentConfiguration configuration) {
         super();
         this.queue = queue;
-        client = new HttpReporterClient(configuration.getReporter());
+        client = initReporterClient(configuration.getReporter());
+    }
+    
+    private static IReporterClient initReporterClient(final ReporterConfig configuration) {
+        switch (configuration.getType()) {
+            case AgentReporterValuesConstant.TYPE_DIRECT:
+                return new HttpReporterClient(configuration);
+            case AgentReporterValuesConstant.TYPE_KAFKA:
+                return null;
+            default:
+                throw new GalaxyTracingException("There is no such reporter as %s", configuration.getType());
+        }
     }
     
     @Override
@@ -51,7 +63,7 @@ public final class Reporter extends Thread {
         while (!shutdown || !queue.isEmpty()) {
             if (!queue.isEmpty()) {
                 try {
-                    client.doPost(DEFAULT_URL, queue.poll());
+                    client.doPost(queue.poll());
                 } catch (GalaxyTracingException ex) {
                     log.error(ex.getMessage());
                 }

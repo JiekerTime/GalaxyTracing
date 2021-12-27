@@ -50,7 +50,10 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @NoArgsConstructor
-public final class HttpReporterClient {
+public final class HttpReporterClient implements IReporterClient {
+    
+    private static final String DEFAULT_URL = "http://localhost:9000/collector";
+    
     /**
      * Maximum number of client connections.
      */
@@ -63,18 +66,22 @@ public final class HttpReporterClient {
     
     private HttpClient httpClient;
     
-    private PoolingHttpClientConnectionManager connectionManager;
-    
     private IdleConnectionMonitor idleConnectionMonitor;
     
+    private String url;
+    
     public HttpReporterClient(final ReporterConfig reporterConfig) {
+        this.url = reporterConfig.getProps().get(AgentConfigParamsConstant.URL);
+        if (url == null || "".equals(url)) {
+            url = DEFAULT_URL;
+        }
         final String configMaxConnCount = reporterConfig.getProps().get(AgentConfigParamsConstant.MAX_CONN_COUNT);
         final String configMaxRouteConnCount = reporterConfig.getProps().get(AgentConfigParamsConstant.MAX_ROUTE_CONN_COUNT);
         final int maxConnCount = configMaxConnCount == null ? DEFAULT_MAX_CONN_COUNT : Integer.parseInt(configMaxConnCount);
         final int maxRouteConnCount = configMaxRouteConnCount == null ? DEFAULT_MAX_ROUTE_CONN_COUNT : Integer.parseInt(configMaxRouteConnCount);
-        this.connectionManager = new PoolingHttpClientConnectionManager();
-        this.connectionManager.setMaxTotal(maxConnCount);
-        this.connectionManager.setDefaultMaxPerRoute(maxRouteConnCount);
+        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+        connectionManager.setMaxTotal(maxConnCount);
+        connectionManager.setDefaultMaxPerRoute(maxRouteConnCount);
         this.httpClient = HttpClients.custom().setConnectionManager(connectionManager)
                 .setKeepAliveStrategy(HttpReporterClient::getKeepAliveDuration).build();
         this.idleConnectionMonitor = new IdleConnectionMonitor(connectionManager);
@@ -85,11 +92,11 @@ public final class HttpReporterClient {
     /**
      * Sending data to the server.
      *
-     * @param url   url
      * @param value value
      * @throws GalaxyTracingException System Exception
      */
-    public void doPost(final String url, final String value) throws GalaxyTracingException {
+    @Override
+    public void doPost(final String value) throws GalaxyTracingException {
         RequestBuilder reqBuilder = RequestBuilder.create(HttpMethodName.POST.toString())
                 .setUri(url)
                 .addHeader("Accept", ContentType.APPLICATION_JSON.toString())
@@ -113,6 +120,7 @@ public final class HttpReporterClient {
     /**
      * Shutdown the reporter server.
      */
+    @Override
     public void shutdown() {
         idleConnectionMonitor.shutdown();
     }
