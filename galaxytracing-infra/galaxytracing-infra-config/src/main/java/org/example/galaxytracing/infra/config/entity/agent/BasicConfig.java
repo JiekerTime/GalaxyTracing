@@ -15,14 +15,33 @@
  * limitations under the License.
  */
 
-package org.example.galaxytracing.infra.config.pojo.impl;
+package org.example.galaxytracing.infra.config.entity.agent;
 
-import org.example.galaxytracing.infra.config.pojo.ConfigurationPojo;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.example.galaxytracing.infra.config.constant.AgentConfigParamsConstant;
+
+import java.util.Properties;
 
 /**
- * Server pojo of agent.
+ * Basic of agent configuration.
  *
  * @author JiekerTime
  */
-public final class ServerConfigurationPojo implements ConfigurationPojo {
+@Getter
+@Setter
+@NoArgsConstructor
+public final class BasicConfig {
+    
+    private static final String PREFIX = AgentConfigParamsConstant.BASIC + ".";
+    
+    private String tracingType;
+    
+    private boolean logging;
+    
+    public BasicConfig(final Properties configuration) {
+        this.tracingType = configuration.getProperty(PREFIX + AgentConfigParamsConstant.TRACING_TYPE);
+        this.logging = Boolean.parseBoolean(configuration.getProperty(PREFIX + AgentConfigParamsConstant.LOGGING));
+    }
 }

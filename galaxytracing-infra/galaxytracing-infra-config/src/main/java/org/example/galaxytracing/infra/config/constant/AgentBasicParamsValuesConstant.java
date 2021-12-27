@@ -15,22 +15,20 @@
  * limitations under the License.
  */
 
-package org.example.galaxytracing.infra.config.exception;
+package org.example.galaxytracing.infra.config.constant;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /**
- * Configuration load exceptions.
+ * Default value constants for base attributes.
  *
  * @author JiekerTime
  */
-public final class ConfigurationLoadException extends RuntimeException {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class AgentBasicParamsValuesConstant {
     
-    private static final long serialVersionUID = 3638709065415032081L;
+    public static final String TYPE_DEFAULT = "default";
     
-    public ConfigurationLoadException(final String message, final Exception exception) {
-        super(String.format("An error occurred while parsing yaml file : `%s`.", message), exception);
-    }
-    
-    public ConfigurationLoadException(final Exception exception) {
-        super(String.format("An exception occurred while parsing yaml file : `%s`.", exception.getMessage()), exception);
-    }
+    public static final String TYPE_SNOWFLAKE = "snowflake";
 }

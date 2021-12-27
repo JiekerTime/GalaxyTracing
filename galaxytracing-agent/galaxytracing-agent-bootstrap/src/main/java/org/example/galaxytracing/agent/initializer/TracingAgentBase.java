@@ -23,7 +23,7 @@ import org.example.galaxytracing.agent.core.storage.TraceStorageBinder;
 import org.example.galaxytracing.agent.reporter.Reporter;
 import org.example.galaxytracing.infra.config.ConfigurationLoader;
 import org.example.galaxytracing.infra.config.exception.ConfigurationLoadException;
-import org.example.galaxytracing.infra.config.pojo.impl.AgentConfigurationPojo;
+import org.example.galaxytracing.infra.config.entity.impl.AgentConfiguration;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -45,19 +45,14 @@ public final class TracingAgentBase {
     
     private final Reporter reporter;
     
-    private TracingAgentBase(final AgentConfigurationPojo configuration) {
-        storage = TraceStorageBinder.INSTANCE.getTraceStorage();
-        mq = new LinkedBlockingQueue<>();
-        reporter = new Reporter(mq);
-        reporter.start();
-    }
+    private AgentConfiguration configuration;
     
-    private static AgentConfigurationPojo loadConfig(final String fileName) throws ConfigurationLoadException {
-        try {
-            return ConfigurationLoader.loadAgentYaml(fileName == null ? DEFAULT_FILE_NAME : fileName, TracingAgent.class);
-        } catch (ConfigurationLoadException ex) {
-            return ConfigurationLoader.loadAgentProperties(fileName == null ? DEFAULT_FILE_NAME : fileName, TracingAgent.class);
-        }
+    private TracingAgentBase(final String fileName) {
+        this.configuration = loadConfiguration(fileName);
+        this.storage = TraceStorageBinder.INSTANCE.getInstance(configuration);
+        this.mq = new LinkedBlockingQueue<>();
+        this.reporter = new Reporter(mq, configuration);
+        reporter.start();
     }
     
     /**
@@ -69,12 +64,29 @@ public final class TracingAgentBase {
     public static TracingAgentBase getInstance(final String fileName) {
         if (singleton == null) {
             if (fileName == null || "".equals(fileName)) {
-                singleton = new TracingAgentBase(loadConfig(null));
+                singleton = new TracingAgentBase(null);
             } else {
-                singleton = new TracingAgentBase(loadConfig(fileName));
+                singleton = new TracingAgentBase(fileName);
             }
         }
         return singleton;
+    }
+    
+    private AgentConfiguration loadConfiguration(final String fileName) {
+        if (configuration == null) {
+            synchronized (this) {
+                if (configuration == null) {
+                    try {
+                        this.configuration = ConfigurationLoader.loadAgentYaml(fileName == null
+                                ? DEFAULT_FILE_NAME : fileName, TracingAgent.class);
+                    } catch (ConfigurationLoadException ex) {
+                        this.configuration = new AgentConfiguration(ConfigurationLoader.loadProperties(fileName == null
+                                ? DEFAULT_FILE_NAME : fileName, TracingAgent.class));
+                    }
+                }
+            }
+        }
+        return configuration;
     }
     
     /**

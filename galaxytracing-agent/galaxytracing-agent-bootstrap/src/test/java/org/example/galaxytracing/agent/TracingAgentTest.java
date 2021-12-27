@@ -15,12 +15,14 @@
  * limitations under the License.
  */
 
-package org.example.galaxytracing.infra.config.pojo;
+package org.example.galaxytracing.agent;
 
-/**
- * Configuration pojo.
- *
- * @author JiekerTime
- */
-public interface ConfigurationPojo {
+import org.junit.Test;
+
+public final class TracingAgentTest {
+    
+    @Test
+    public void constructorTest() {
+        new TracingAgent();
+    }
 }

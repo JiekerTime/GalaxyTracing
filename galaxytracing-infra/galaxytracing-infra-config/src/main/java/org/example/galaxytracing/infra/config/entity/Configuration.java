@@ -15,22 +15,12 @@
  * limitations under the License.
  */
 
-package org.example.galaxytracing.infra.config.exception;
+package org.example.galaxytracing.infra.config.entity;
 
 /**
- * Configuration load exceptions.
+ * Configuration pojo.
  *
  * @author JiekerTime
  */
-public final class ConfigurationLoadException extends RuntimeException {
-    
-    private static final long serialVersionUID = 3638709065415032081L;
-    
-    public ConfigurationLoadException(final String message, final Exception exception) {
-        super(String.format("An error occurred while parsing yaml file : `%s`.", message), exception);
-    }
-    
-    public ConfigurationLoadException(final Exception exception) {
-        super(String.format("An exception occurred while parsing yaml file : `%s`.", exception.getMessage()), exception);
-    }
+public interface Configuration {
 }

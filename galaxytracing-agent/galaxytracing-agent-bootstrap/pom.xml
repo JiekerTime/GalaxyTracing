@@ -51,11 +51,6 @@
             <artifactId>javapoet</artifactId>
             <version>${javapoet.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.example.galaxytracing</groupId>
-            <artifactId>galaxytracing-infra-config</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
     
     <profiles>

@@ -20,6 +20,7 @@ package org.example.galaxytracing.agent.reporter;
 import lombok.extern.slf4j.Slf4j;
 import org.example.galaxytracing.agent.reporter.http.client.HttpReporterClient;
 import org.example.galaxytracing.infra.common.exception.GalaxyTracingException;
+import org.example.galaxytracing.infra.config.entity.impl.AgentConfiguration;
 
 import java.util.concurrent.BlockingQueue;
 
@@ -35,11 +36,14 @@ public final class Reporter extends Thread {
     
     private final BlockingQueue<String> queue;
     
+    private final HttpReporterClient client;
+    
     private volatile boolean shutdown;
     
-    public Reporter(final BlockingQueue<String> queue) {
+    public Reporter(final BlockingQueue<String> queue, final AgentConfiguration configuration) {
         super();
         this.queue = queue;
+        client = new HttpReporterClient(configuration.getReporter());
     }
     
     @Override
@@ -47,13 +51,13 @@ public final class Reporter extends Thread {
         while (!shutdown || !queue.isEmpty()) {
             if (!queue.isEmpty()) {
                 try {
-                    HttpReporterClient.doPost(DEFAULT_URL, queue.poll());
+                    client.doPost(DEFAULT_URL, queue.poll());
                 } catch (GalaxyTracingException ex) {
                     log.error(ex.getMessage());
                 }
             }
         }
-        HttpReporterClient.shutdown();
+        client.shutdown();
         log.info("Reporter is closed.");
     }
     

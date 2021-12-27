@@ -17,7 +17,7 @@
 
 package org.example.galaxytracing.agent.core.storage;
 
-import org.example.galaxytracing.agent.core.storage.impl.DefaultTraceStorage;
+import org.example.galaxytracing.agent.core.storage.impl.SnowFlakeTraceStorage;
 
 import java.util.Map;
 import java.util.Set;
@@ -35,7 +35,7 @@ public interface TraceStorage {
      * @param data data
      * @return default storage
      */
-    DefaultTraceStorage put(String key, String data);
+    SnowFlakeTraceStorage put(String key, String data);
     
     /**
      * Get the data according to the key.

@@ -15,21 +15,20 @@
  * limitations under the License.
  */
 
-package org.example.galaxytracing.infra.config.yaml.engine;
+package org.example.galaxytracing.infra.config.engine.yaml;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.example.galaxytracing.infra.config.exception.ConfigurationLoadException;
-import org.example.galaxytracing.infra.config.pojo.ConfigurationPojo;
+import org.example.galaxytracing.infra.config.entity.Configuration;
+import org.example.galaxytracing.infra.config.entity.impl.AgentConfiguration;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * YAML engine.
@@ -43,46 +42,22 @@ public final class YamlEngine {
      * Parsing the configuration file.
      *
      * @param yamlFile yaml file io stream
+     * @param clazz    configuration pojo
      * @return java.util.Properties
      * @throws ConfigurationLoadException Configuration file load exception
      */
-    public static Properties parseYaml2Properties(final File yamlFile) throws ConfigurationLoadException {
-        Properties result = new Properties();
+    public static Configuration loadYaml(final File yamlFile, final Class<?> clazz) throws ConfigurationLoadException {
+        AgentConfiguration result;
         try (
                 FileInputStream fileInputStream = new FileInputStream(yamlFile);
                 InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream)
         ) {
-            final Map<String, Object> configMap = new Yaml().load(inputStreamReader);
-            for (String key : configMap.keySet()) {
-                result.setProperty(key, String.valueOf(configMap.get(key)));
-            }
+            Yaml yaml = new Yaml(new Constructor(clazz));
+            result = yaml.load(inputStreamReader);
         } catch (IOException ex) {
             throw new ConfigurationLoadException(ex);
         }
         return result;
-    }
-    
-    /**
-     * Parsing configuration files to entity classes.
-     *
-     * @param <T> Profile entities class
-     * @param classType Profile entities class
-     * @param yamlFile yaml file io stream
-     * @return T Profile entities class
-     * @throws ConfigurationLoadException Configuration file load exception
-     */
-    public static <T extends ConfigurationPojo> T parseYaml2Pojo(final File yamlFile, final Class<T> classType) throws ConfigurationLoadException {
-        try (
-                FileInputStream fileInputStream = new FileInputStream(yamlFile);
-                InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream)
-        ) {
-            if (Arrays.stream(classType.getInterfaces()).anyMatch(clazz -> clazz == ConfigurationPojo.class)) {
-                return new Yaml().loadAs(inputStreamReader, classType);
-            }
-        } catch (IOException ex) {
-            throw new ConfigurationLoadException(ex);
-        }
-        throw new ConfigurationLoadException(classType);
     }
     
 }

@@ -15,14 +15,35 @@
  * limitations under the License.
  */
 
-package org.example.galaxytracing.infra.config.pojo.impl;
+package org.example.galaxytracing.infra.config.constant;
 
-import org.example.galaxytracing.infra.config.pojo.ConfigurationPojo;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /**
- * Configuration pojo of agent.
+ * Agent-side configuration file parameter name constants.
  *
  * @author JiekerTime
  */
-public final class AgentConfigurationPojo implements ConfigurationPojo {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class AgentConfigParamsConstant {
+    
+    public static final String BASIC = "basic";
+    
+    public static final String REPORTER = "reporter";
+    
+    public static final String TYPE = "type";
+    
+    public static final String PROPS = "props";
+    
+    public static final String URL = "url";
+    
+    public static final String MAX_CONN_COUNT = "max_conn_count";
+    
+    public static final String MAX_ROUTE_CONN_COUNT = "max_conn_count";
+    
+    public static final String TRACING_TYPE = "tracingType";
+    
+    public static final String LOGGING = "logging";
+    
 }

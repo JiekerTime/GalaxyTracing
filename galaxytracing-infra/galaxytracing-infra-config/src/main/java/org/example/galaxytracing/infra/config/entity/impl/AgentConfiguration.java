@@ -15,22 +15,33 @@
  * limitations under the License.
  */
 
-package org.example.galaxytracing.infra.config.exception;
+package org.example.galaxytracing.infra.config.entity.impl;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.example.galaxytracing.infra.config.entity.Configuration;
+import org.example.galaxytracing.infra.config.entity.agent.BasicConfig;
+import org.example.galaxytracing.infra.config.entity.agent.ReporterConfig;
+
+import java.util.Properties;
 
 /**
- * Configuration load exceptions.
+ * Configuration pojo of agent.
  *
  * @author JiekerTime
  */
-public final class ConfigurationLoadException extends RuntimeException {
+@Getter
+@Setter
+@NoArgsConstructor
+public final class AgentConfiguration implements Configuration {
     
-    private static final long serialVersionUID = 3638709065415032081L;
+    private BasicConfig basic;
     
-    public ConfigurationLoadException(final String message, final Exception exception) {
-        super(String.format("An error occurred while parsing yaml file : `%s`.", message), exception);
-    }
+    private ReporterConfig reporter;
     
-    public ConfigurationLoadException(final Exception exception) {
-        super(String.format("An exception occurred while parsing yaml file : `%s`.", exception.getMessage()), exception);
+    public AgentConfiguration(final Properties configuration) {
+        this.basic = new BasicConfig(configuration);
+        this.reporter = new ReporterConfig(configuration);
     }
 }

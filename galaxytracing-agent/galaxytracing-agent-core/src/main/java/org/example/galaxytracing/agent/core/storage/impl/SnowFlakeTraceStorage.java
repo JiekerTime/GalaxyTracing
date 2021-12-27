@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author JiekerTime
  */
 @NoArgsConstructor
-public final class DefaultTraceStorage implements TraceStorage {
+public final class SnowFlakeTraceStorage implements TraceStorage {
     
     private static final String TRACE_ID = "traceId";
     
@@ -49,7 +49,7 @@ public final class DefaultTraceStorage implements TraceStorage {
     private final SnowflakeId snowflakeId = new SnowflakeId();
     
     @Override
-    public DefaultTraceStorage put(final String key, final String data) {
+    public SnowFlakeTraceStorage put(final String key, final String data) {
         Map<String, String> oldMap = dataMap.get();
         Integer lastOp = getAndSetLastOperation();
         if (wasLastOpReadOrNull(lastOp) || oldMap == null) {

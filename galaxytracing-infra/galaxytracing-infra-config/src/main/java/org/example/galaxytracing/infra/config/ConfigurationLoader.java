@@ -20,10 +20,10 @@ package org.example.galaxytracing.infra.config;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.example.galaxytracing.infra.config.exception.ConfigurationLoadException;
-import org.example.galaxytracing.infra.config.pojo.impl.AgentConfigurationPojo;
-import org.example.galaxytracing.infra.config.pojo.impl.ServerConfigurationPojo;
-import org.example.galaxytracing.infra.config.properties.factory.PropertiesGalaxyTracingConfigurationFactory;
-import org.example.galaxytracing.infra.config.yaml.factory.YamlGalaxyTracingConfigurationFactory;
+import org.example.galaxytracing.infra.config.entity.impl.AgentConfiguration;
+import org.example.galaxytracing.infra.config.entity.impl.ServerConfiguration;
+import org.example.galaxytracing.infra.config.engine.properties.PropertiesEngine;
+import org.example.galaxytracing.infra.config.engine.yaml.YamlEngine;
 
 import java.io.File;
 import java.util.Properties;
@@ -51,74 +51,75 @@ public final class ConfigurationLoader {
     }
     
     /**
-     * Load the agent's yaml configuration file.
-     *
-     * @param fileName configuration yaml file name
-     * @param clazz    class
-     * @return Agent Configuration Pojo
-     * @throws ConfigurationLoadException Configuration file load exception
-     */
-    public static AgentConfigurationPojo loadAgentYaml(final String fileName, final Class<?> clazz) throws ConfigurationLoadException {
-        return YamlGalaxyTracingConfigurationFactory.createAgentConfiguration(getFile(String.format(fileName, "yaml"), clazz));
-    }
-    
-    /**
-     * Load the server's yaml configuration file.
-     *
-     * @param fileName configuration yaml file name
-     * @param clazz    class
-     * @return Server Configuration Pojo
-     * @throws ConfigurationLoadException Configuration file load exception
-     */
-    public static ServerConfigurationPojo loadServerYaml(final String fileName, final Class<?> clazz) throws ConfigurationLoadException {
-        return YamlGalaxyTracingConfigurationFactory.createServerConfiguration(getFile(String.format(fileName, "yaml"), clazz));
-    }
-    
-    /**
-     * Load the agent's properties configuration file.
+     * load agent yaml.
      *
      * @param fileName configuration properties file name
      * @param clazz    class
-     * @return Agent Configuration Pojo
+     * @return AgentConfiguration
      * @throws ConfigurationLoadException Configuration file load exception
      */
-    public static AgentConfigurationPojo loadAgentProperties(final String fileName, final Class<?> clazz) throws ConfigurationLoadException {
-        return PropertiesGalaxyTracingConfigurationFactory.createAgentConfiguration(getFile(String.format(fileName, "properties"), clazz));
+    public static AgentConfiguration loadAgentYaml(final String fileName, final Class<?> clazz) throws ConfigurationLoadException {
+        return loadAgentYaml(getFile(String.format(fileName, "yaml"), clazz));
     }
     
+    
     /**
-     * Load the server's properties configuration file.
+     * load agent yaml.
+     *
+     * @param yamlFile yaml file io stream
+     * @return AgentConfiguration
+     * @throws ConfigurationLoadException Configuration file load exception
+     */
+    private static AgentConfiguration loadAgentYaml(final File yamlFile) throws ConfigurationLoadException {
+        return (AgentConfiguration) YamlEngine.loadYaml(yamlFile, AgentConfiguration.class);
+    }
+    
+    
+    
+    /**
+     * load yaml.
      *
      * @param fileName configuration properties file name
      * @param clazz    class
-     * @return Server Configuration Pojo
+     * @return ServerConfiguration
      * @throws ConfigurationLoadException Configuration file load exception
      */
-    public static ServerConfigurationPojo loadServerProperties(final String fileName, final Class<?> clazz) throws ConfigurationLoadException {
-        return PropertiesGalaxyTracingConfigurationFactory.createServerConfiguration(getFile(String.format(fileName, "properties"), clazz));
+    public static ServerConfiguration loadServerYaml(final String fileName, final Class<?> clazz) throws ConfigurationLoadException {
+        return loadServerYaml(getFile(String.format(fileName, "yaml"), clazz));
     }
     
+    
     /**
-     * Converting yaml configuration files to properties.
+     * load yaml.
      *
-     * @param fileName configuration properties file name
-     * @param clazz    class
-     * @return Properties of configuration
+     * @param yamlFile yaml file io stream
+     * @return ServerConfiguration
      * @throws ConfigurationLoadException Configuration file load exception
      */
-    public static Properties getYamlConfigProperties(final String fileName, final Class<?> clazz) throws ConfigurationLoadException {
-        return YamlGalaxyTracingConfigurationFactory.createAgentProperties(getFile(String.format(fileName, "yaml"), clazz));
+    private static ServerConfiguration loadServerYaml(final File yamlFile) throws ConfigurationLoadException {
+        return (ServerConfiguration) YamlEngine.loadYaml(yamlFile, ServerConfiguration.class);
     }
     
     /**
-     * Converting properties configuration files to properties pojo.
+     * load properties.
      *
      * @param fileName configuration properties file name
      * @param clazz    class
      * @return Properties of configuration
      * @throws ConfigurationLoadException Configuration file load exception
      */
-    public static Properties getPropertiesConfigProperties(final String fileName, final Class<?> clazz) throws ConfigurationLoadException {
-        return PropertiesGalaxyTracingConfigurationFactory.createAgentProperties(getFile(String.format(fileName, "properties"), clazz));
+    public static Properties loadProperties(final String fileName, final Class<?> clazz) throws ConfigurationLoadException {
+        return loadProperties(getFile(String.format(fileName, "properties"), clazz));
+    }
+    
+    /**
+     * load properties.
+     *
+     * @param propertiesFile properties file io stream
+     * @return properties
+     * @throws ConfigurationLoadException Configuration file load exception
+     */
+    private static Properties loadProperties(final File propertiesFile) throws ConfigurationLoadException {
+        return PropertiesEngine.parseProperties(propertiesFile);
     }
 }

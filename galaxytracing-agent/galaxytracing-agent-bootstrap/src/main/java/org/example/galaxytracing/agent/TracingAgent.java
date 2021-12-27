@@ -20,7 +20,7 @@ package org.example.galaxytracing.agent;
 import com.google.common.base.Strings;
 import com.huawei.shade.com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
-import org.example.galaxytracing.agent.core.storage.impl.DefaultTraceStorage;
+import org.example.galaxytracing.agent.core.storage.impl.SnowFlakeTraceStorage;
 import org.example.galaxytracing.agent.initializer.TracingAgentBase;
 import org.example.galaxytracing.infra.common.constant.GalaxyTracingAgentMessage;
 import org.example.galaxytracing.infra.common.exception.GalaxyTracingException;
@@ -75,7 +75,7 @@ public final class TracingAgent {
      * @return default traceStorage
      * @throws GalaxyTracingException System exception
      */
-    public DefaultTraceStorage put(final String key, final String data) throws GalaxyTracingException {
+    public SnowFlakeTraceStorage put(final String key, final String data) throws GalaxyTracingException {
         if (Strings.isNullOrEmpty(key)) {
             throw new GalaxyTracingException(GalaxyTracingAgentMessage.NULL_KEY_ERROR);
         }

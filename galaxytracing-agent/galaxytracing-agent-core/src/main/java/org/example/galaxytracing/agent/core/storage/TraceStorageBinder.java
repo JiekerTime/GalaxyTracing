@@ -19,10 +19,13 @@ package org.example.galaxytracing.agent.core.storage;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.example.galaxytracing.agent.core.storage.impl.DefaultTraceStorage;
+import org.example.galaxytracing.agent.core.storage.impl.SnowFlakeTraceStorage;
+import org.example.galaxytracing.infra.common.exception.GalaxyTracingException;
+import org.example.galaxytracing.infra.config.constant.AgentBasicParamsValuesConstant;
+import org.example.galaxytracing.infra.config.entity.impl.AgentConfiguration;
 
 /**
- * This implementation is bound to {@link DefaultTraceStorage}.
+ * This implementation is bound to {@link SnowFlakeTraceStorage}.
  *
  * @author JiekerTime
  */
@@ -33,12 +36,30 @@ public final class TraceStorageBinder {
      */
     public static final TraceStorageBinder INSTANCE = new TraceStorageBinder();
     
+    private static TraceStorage singleton;
+    
     /**
      * The instance of trace data storage.
      *
+     * @param configuration configuration of agent
      * @return TraceStorage
      */
-    public TraceStorage getTraceStorage() {
-        return new DefaultTraceStorage();
+    public TraceStorage getInstance(final AgentConfiguration configuration) {
+        if (singleton == null) {
+            synchronized (INSTANCE) {
+                if (singleton == null) {
+                    switch (configuration.getBasic().getTracingType()) {
+                        case AgentBasicParamsValuesConstant.TYPE_DEFAULT:
+                        case AgentBasicParamsValuesConstant.TYPE_SNOWFLAKE:
+                            singleton = new SnowFlakeTraceStorage();
+                            break;
+                        default:
+                            throw new GalaxyTracingException("Unsupported agent types %s.",
+                                    configuration.getBasic().getTracingType());
+                    }
+                }
+            }
+        }
+        return singleton;
     }
 }

@@ -36,6 +36,8 @@ import com.huawei.shade.org.apache.http.util.EntityUtils;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.galaxytracing.infra.common.exception.GalaxyTracingException;
+import org.example.galaxytracing.infra.config.constant.AgentConfigParamsConstant;
+import org.example.galaxytracing.infra.config.entity.agent.ReporterConfig;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -52,27 +54,31 @@ public final class HttpReporterClient {
     /**
      * Maximum number of client connections.
      */
-    private static final int MAX_CONN_COUNT = 100;
+    private static final int DEFAULT_MAX_CONN_COUNT = 100;
     
     /**
      * Maximum number of server-side connections.
      */
-    private static final int MAX_ROUTE_CONN_COUNT = 10;
+    private static final int DEFAULT_MAX_ROUTE_CONN_COUNT = 10;
     
-    private static final HttpClient HTTP_CLIENT;
+    private HttpClient httpClient;
     
-    private static final PoolingHttpClientConnectionManager CONNECTION_MANAGER;
+    private PoolingHttpClientConnectionManager connectionManager;
     
-    private static final IdleConnectionMonitor CONNECTION_MONITOR;
+    private IdleConnectionMonitor idleConnectionMonitor;
     
-    static {
-        CONNECTION_MANAGER = new PoolingHttpClientConnectionManager();
-        CONNECTION_MANAGER.setMaxTotal(MAX_CONN_COUNT);
-        CONNECTION_MANAGER.setDefaultMaxPerRoute(MAX_ROUTE_CONN_COUNT);
-        HTTP_CLIENT = HttpClients.custom().setConnectionManager(CONNECTION_MANAGER)
+    public HttpReporterClient(final ReporterConfig reporterConfig) {
+        final String configMaxConnCount = reporterConfig.getProps().get(AgentConfigParamsConstant.MAX_CONN_COUNT);
+        final String configMaxRouteConnCount = reporterConfig.getProps().get(AgentConfigParamsConstant.MAX_ROUTE_CONN_COUNT);
+        final int maxConnCount = configMaxConnCount == null ? DEFAULT_MAX_CONN_COUNT : Integer.parseInt(configMaxConnCount);
+        final int maxRouteConnCount = configMaxRouteConnCount == null ? DEFAULT_MAX_ROUTE_CONN_COUNT : Integer.parseInt(configMaxRouteConnCount);
+        this.connectionManager = new PoolingHttpClientConnectionManager();
+        this.connectionManager.setMaxTotal(maxConnCount);
+        this.connectionManager.setDefaultMaxPerRoute(maxRouteConnCount);
+        this.httpClient = HttpClients.custom().setConnectionManager(connectionManager)
                 .setKeepAliveStrategy(HttpReporterClient::getKeepAliveDuration).build();
-        CONNECTION_MONITOR = new IdleConnectionMonitor(CONNECTION_MANAGER);
-        CONNECTION_MONITOR.start();
+        this.idleConnectionMonitor = new IdleConnectionMonitor(connectionManager);
+        this.idleConnectionMonitor.start();
         log.info("Agent's connection monitoring service start success!");
     }
     
@@ -83,7 +89,7 @@ public final class HttpReporterClient {
      * @param value value
      * @throws GalaxyTracingException System Exception
      */
-    public static void doPost(final String url, final String value) throws GalaxyTracingException {
+    public void doPost(final String url, final String value) throws GalaxyTracingException {
         RequestBuilder reqBuilder = RequestBuilder.create(HttpMethodName.POST.toString())
                 .setUri(url)
                 .addHeader("Accept", ContentType.APPLICATION_JSON.toString())
@@ -93,7 +99,7 @@ public final class HttpReporterClient {
         }
         log.info("Posting data {}", value);
         try {
-            HttpResponse response = HTTP_CLIENT.execute(reqBuilder.build());
+            HttpResponse response = httpClient.execute(reqBuilder.build());
             String msg = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
             if (log.isDebugEnabled()) {
                 log.info("Response from GalaxyTracing server: {}", msg);
@@ -107,8 +113,8 @@ public final class HttpReporterClient {
     /**
      * Shutdown the reporter server.
      */
-    public static void shutdown() {
-        CONNECTION_MONITOR.shutdown();
+    public void shutdown() {
+        idleConnectionMonitor.shutdown();
     }
     
     private static long getKeepAliveDuration(final HttpResponse response, final HttpContext httpContext) {
