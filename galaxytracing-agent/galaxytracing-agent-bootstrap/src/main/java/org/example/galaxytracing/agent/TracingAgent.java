@@ -186,7 +186,7 @@ public final class TracingAgent {
      * Get the traceId of the storage.
      *
      * @return traceId
-     * @throws GalaxyTracingException 系统异常
+     * @throws GalaxyTracingException System exception
      */
     public String getTraceId() throws GalaxyTracingException {
         if (singleton.getStorage() == null) {
@@ -200,7 +200,7 @@ public final class TracingAgent {
      * Reset the traceId in the storage.
      *
      * @param traceId traceId
-     * @throws GalaxyTracingException 系统异常
+     * @throws GalaxyTracingException System exception
      */
     public void resetTraceId(@Nullable final String traceId) throws GalaxyTracingException {
         if (singleton.getStorage() == null) {
