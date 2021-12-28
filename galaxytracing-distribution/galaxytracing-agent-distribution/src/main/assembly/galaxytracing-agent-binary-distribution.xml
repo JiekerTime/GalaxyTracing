@@ -23,6 +23,15 @@
     </formats>
     <includeBaseDirectory>true</includeBaseDirectory>
     
+    <fileSets>
+        <fileSet>
+            <directory>../../</directory>
+            <includes>
+                <include>LICENSE</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+    
     <dependencySets>
         <dependencySet>
             <useProjectArtifact>true</useProjectArtifact>
