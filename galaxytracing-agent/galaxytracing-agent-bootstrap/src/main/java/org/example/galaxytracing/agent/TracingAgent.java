@@ -237,7 +237,7 @@ public final class TracingAgent {
      * @param logger log engine
      * @throws GalaxyTracingException System exception
      */
-    public void finish(Logger logger) throws GalaxyTracingException {
+    public void finish(final Logger logger) throws GalaxyTracingException {
         if (singleton.getStorage() == null) {
             throw new GalaxyTracingException(GalaxyTracingAgentMessage.NULL_TRACE_STORAGE_ERROR);
         }
