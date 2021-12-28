@@ -26,39 +26,31 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     
-    <artifactId>galaxytracing-agent-distribution</artifactId>
+    <artifactId>galaxytracing-source-distribution</artifactId>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
     
-    <dependencies>
-        <dependency>
-            <groupId>org.example.galaxytracing</groupId>
-            <artifactId>galaxytracing-agent-bootstrap</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
     
     <profiles>
         <profile>
             <id>release</id>
             <build>
-                <finalName>galaxytracing-agent-${project.version}</finalName>
+                <finalName>galaxytracing-${project.version}</finalName>
                 <plugins>
                     <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
-                        <configuration>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <descriptors>
-                                <descriptor>src/main/assembly/galaxytracing-agent-binary-distribution.xml</descriptor>
-                            </descriptors>
-                        </configuration>
                         <executions>
                             <execution>
-                                <id>galaxytracing-agent-bin</id>
+                                <id>src</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>single</goal>
                                 </goals>
+                                <configuration>
+                                    <descriptors>
+                                        <descriptor>src/main/assembly/source-distribution.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
