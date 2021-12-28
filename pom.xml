@@ -403,11 +403,11 @@
     
     <distributionManagement>
         <repository>
-            <id>snapshots</id>
+            <id>galaxytraicing</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
         <snapshotRepository>
-            <id>snapshots</id>
+            <id>galaxytraicing</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
