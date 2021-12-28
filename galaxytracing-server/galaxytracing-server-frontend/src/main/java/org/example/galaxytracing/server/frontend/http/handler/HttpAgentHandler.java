@@ -38,7 +38,7 @@ import org.example.galaxytracing.infra.common.thread.ExecutorServiceManager;
  *
  * @author JiekerTime
  */
-@Slf4j
+@Slf4j(topic = "server")
 public final class HttpAgentHandler extends ChannelInboundHandlerAdapter {
     
     private static final String DEFAULT_URI_PATH = "/collector";

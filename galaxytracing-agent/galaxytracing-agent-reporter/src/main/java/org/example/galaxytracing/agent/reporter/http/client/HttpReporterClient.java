@@ -48,7 +48,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author JiekerTime
  */
-@Slf4j
+@Slf4j(topic = "agent")
 @NoArgsConstructor
 public final class HttpReporterClient implements IReporterClient {
     

@@ -17,6 +17,7 @@
 
 package org.example.galaxytracing.agent.initializer;
 
+import lombok.Getter;
 import org.example.galaxytracing.agent.TracingAgent;
 import org.example.galaxytracing.agent.core.storage.TraceStorage;
 import org.example.galaxytracing.agent.core.storage.TraceStorageBinder;
@@ -45,6 +46,7 @@ public final class TracingAgentBase {
     
     private final Reporter reporter;
     
+    @Getter
     private AgentConfiguration configuration;
     
     private TracingAgentBase(final String fileName) {

@@ -39,7 +39,7 @@ import org.example.galaxytracing.server.frontend.netty.ServerHandlerInitializer;
  *
  * @author JiekerTime
  */
-@Slf4j
+@Slf4j(topic = "server")
 public final class Collector {
     
     private static final int DEFAULT_PORT = 9000;

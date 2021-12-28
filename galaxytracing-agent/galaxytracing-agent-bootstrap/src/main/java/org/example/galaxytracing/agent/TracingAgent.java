@@ -24,6 +24,7 @@ import org.example.galaxytracing.agent.core.storage.impl.SnowFlakeTraceStorage;
 import org.example.galaxytracing.agent.initializer.TracingAgentBase;
 import org.example.galaxytracing.infra.common.constant.GalaxyTracingAgentMessage;
 import org.example.galaxytracing.infra.common.exception.GalaxyTracingException;
+import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -34,7 +35,7 @@ import java.util.Set;
  *
  * @author JiekerTime
  */
-@Slf4j
+@Slf4j(topic = "agent")
 public final class TracingAgent {
     
     private final TracingAgentBase singleton;
@@ -227,13 +228,27 @@ public final class TracingAgent {
      * @throws GalaxyTracingException System exception
      */
     public void finish() throws GalaxyTracingException {
+        finish(log);
+    }
+    
+    /**
+     * Finish the storage even.
+     *
+     * @param logger log engine
+     * @throws GalaxyTracingException System exception
+     */
+    public void finish(Logger logger) throws GalaxyTracingException {
         if (singleton.getStorage() == null) {
             throw new GalaxyTracingException(GalaxyTracingAgentMessage.NULL_TRACE_STORAGE_ERROR);
         }
         if (!singleton.getReporter().isAlive()) {
             throw new GalaxyTracingException(GalaxyTracingAgentMessage.REPORTER_SHUTDOWN_ERROR);
         }
-        singleton.getMq().offer(singleton.getStorage().clear());
+        if (singleton.getConfiguration().getBasic().isLogging()) {
+            final String msg = singleton.getStorage().clear();
+            logger.info(msg);
+            singleton.getMq().offer(msg);
+        }
     }
     
     /**

@@ -32,7 +32,7 @@ import java.util.concurrent.BlockingQueue;
  *
  * @author JiekerTime
  */
-@Slf4j
+@Slf4j(topic = "agent")
 public final class Reporter extends Thread {
     
     private final BlockingQueue<String> queue;
